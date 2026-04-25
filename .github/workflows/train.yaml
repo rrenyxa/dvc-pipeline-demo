@@ -33,7 +33,7 @@ jobs:
             --cloud=aws \
             --cloud-region=us-east-1 \
             --cloud-type=t3.medium \
-            --cloud-image=ubuntu-22.04 \
+            --cloud-image=ami-0e2c8ccd4e1ffc351 \
             --labels=cml-cpu \
             --reuse \
             --cloud-spot
