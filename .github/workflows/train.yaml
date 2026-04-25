@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install CML
-        uses: iterative/setup-cml@v2
+        uses: iterative/setup-cml@v1
 
       - name: Launch AWS Runner
         shell: bash
@@ -29,12 +29,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           REPO_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
         run: |
-          cml runner launch \
+          cml-runner launch \
             --cloud=aws \
-            --cloud-region=eu-central-1 \
+            --cloud-region=us-east-1 \
             --cloud-type=t3.medium \
             --labels=cml-cpu \
-            --reuse
+            --cloud-image=ubuntu-20.04
 
   train-mode:
     needs: launch-runner
