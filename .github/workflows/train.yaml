@@ -34,7 +34,7 @@ jobs:
           --cloud=aws \
           --labels=cml-cpu \
           --cloud-type=t3.large \
-          --cloud-region=eu-west \
+          --cloud-region=eu-west-1 \
           --cloud-spot
 
   train-mode:
