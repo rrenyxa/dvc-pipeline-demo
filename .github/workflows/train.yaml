@@ -32,10 +32,9 @@ jobs:
           cml runner launch \
             --cloud=aws \
             --cloud-region=us-east-1 \
-            --cloud-type=t3.medium \
+            --cloud-type=t2.micro \
             --labels=cml-cpu \
-            --reuse \
-            --cloud-spot-price=0.05
+            --reuse
 
   train-mode:
     needs: launch-runner
