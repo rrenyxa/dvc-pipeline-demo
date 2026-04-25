@@ -29,7 +29,7 @@ jobs:
           cml runner launch \
             --cloud=aws \
             --cloud-region=eu-central-1 \
-            --cloud-type=t3.medium \
+            --cloud-type=t3.micro \
             --cloud-image=ubuntu \
             --cloud-metadata="subnet_id=subnet-0caa6172f115f9758" \
             --labels=cml-cpu
