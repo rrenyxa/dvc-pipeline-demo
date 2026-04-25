@@ -33,7 +33,7 @@ jobs:
             --cloud=aws \
             --cloud-region=eu-central-1 \
             --cloud-type=t3.medium \
-            --cloud-image=ami-060ad7afa363c588b \
+            --cloud-image=amazon-linux-2 \
             --labels=cml-cpu \
             --reuse
 
