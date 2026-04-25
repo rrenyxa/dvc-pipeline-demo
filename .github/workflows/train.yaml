@@ -28,7 +28,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           REPO_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-         run: |
+        run: |
           cml runner launch \
             --cloud=aws \
             --cloud-region=eu-central-1 \
