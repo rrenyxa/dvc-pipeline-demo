@@ -1,0 +1,51 @@
+stages:
+  preprocess: 
+    cmd: >
+      python src/dvc_pipeline_demo/preprocess.py
+      --train-dir ${preprocess.train_dir}
+      --test-dir ${preprocess.test_dir}
+      --output-dir ${preprocess.output_dir}
+      --num-train ${preprocess.num_train}
+      --num-test ${preprocess.num_test}
+    params:
+      - preprocess
+    outs:
+      - ${preprocess.output_dir}
+  train: 
+    cmd: >
+      python src/dvc_pipeline_demo/train.py
+      --train-dir ${preprocess.output_dir}/train
+      --output-dir ${train.output_dir}
+      --num-epochs ${train.epochs}
+      --batch-size ${train.batch_size}
+      --learning-rate ${train.learning_rate}
+      --num-workers ${train.num_workers}
+      --device ${train.device}
+    deps:
+      - ${preprocess.output_dir}
+      - src/dvc_pipeline_demo/train.py
+      - src/dvc_pipeline_demo/data.py
+      - src/dvc_pipeline_demo/model_arch.py
+    params:
+      - train
+      - preprocess
+    outs:
+      - ${train.output_dir}/model.pth
+      - ${train.output_dir}/artifacts
+  eval:
+    cmd: >
+      python src/dvc_pipeline_demo/evaluate.py
+      --model-path ${train.output_dir}/model.pth
+      --num-workers ${eval.num_workers}
+      --test-dir ${preprocess.output_dir}/test
+      --output-dir ${eval.output_dir}
+    params:
+      - eval
+    deps:
+      - ${preprocess.output_dir}/test
+      - ${train.output_dir}/model.pth
+      - src/dvc_pipeline_demo/evaluate.py
+      - src/dvc_pipeline_demo/data.py
+      - src/dvc_pipeline_demo/metrics.py
+    outs:
+      - ${eval.output_dir}

@@ -1,0 +1,13 @@
+# Python cache
+__pycache__/
+*.py[oc]
+
+# Virtual environment
+.venv/
+
+# Local experiment tracking noise
+mlruns/
+mlflow.db
+
+# OS noise
+.DS_Store

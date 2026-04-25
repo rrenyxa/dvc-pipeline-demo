@@ -1,0 +1,4 @@
+[core]
+    remote = storage
+['remote "storage"']
+    url = s3://dvc-storage-1b63f2cf/cat-dogs/dvc-storage

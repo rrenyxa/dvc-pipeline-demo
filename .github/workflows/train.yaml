@@ -1,0 +1,104 @@
+on:
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+    inputs:
+      epochs:
+        description: Training epochs
+        required: True
+        default: 3
+permissions:
+  contents: write
+
+
+jobs:
+  launch-runner:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install CML
+        uses: iterative/setup-cml@v2
+
+      - name: Launch AWS Runner
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          REPO_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        run: |
+          echo "Credentials configured"
+          cml runner launch --reuse \
+          --cloud=aws \
+          --labels=cml-cpu \
+          --cloud-type=t3.large \
+          --cloud-region=us-east-1
+
+  train-mode:
+    needs: launch-runner
+    runs-on: [self-hosted, cml-cpu]
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Instal uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.5.30"
+          enable_cache: True
+      
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install Dependencies
+        run: uv sync
+
+      - name: Download Data
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        run: uv run dvc pull data/raw.dvc
+      
+      - name: Run Pipeline
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          DATABRICKS_TOKEN: ${{secrets.DATABRICKS_TOKEN}}
+          DATABRICKS_HOST: ${{vars.DATABRICKS_HOST}}
+          MLFLOW_TRACKING_URI: ${{vars.MLFLOW_TRACKING_URI}}
+          MLFLOW_EXPERIMENT_NAME: ${{vars.MLFLOW_EXPERIMENT_NAME}}
+          MLFLOW_REGISTERED_MODEL_NAME: ${{vars.MLFLOW_REGISTERED_MODEL_NAME}}
+          EPOCHS: ${{github.event.inputs.epochs || 3}}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          uv run dvc repro -S train.epochs=$EPOCHS
+      
+      - name: Push Data and Model
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        run: |
+          uv run dvc push
+          git add dvc.lock
+          git diff --staged --quiet || (git commit -m "Update dvc.lock after training" && git push)
+
+      - name: Report
+        env: 
+          REPO_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        run: |
+          LAST_COMMIT=$(git rev-parse HEAD)
+          echo "LAST_COMMIT: $LAST_COMMIT"
+
+          cat eval-artifacts/metrics.json > report.md
+          echo '![](./eval-artifacts/confusion_matrix.png "Confusion Matrix")' >> report.md
+          cml comment create --target commit/$LAST_COMMIT report.md
+
+
+
+  
