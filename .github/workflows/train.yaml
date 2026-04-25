@@ -10,33 +10,33 @@ permissions:
   contents: write
 
 jobs:
-  launch-runner:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  # launch-runner:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Install CML
-        uses: iterative/setup-cml@v2
+  #     - name: Install CML
+  #       uses: iterative/setup-cml@v2
 
-      - name: Launch AWS Runner
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          REPO_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-        run: |
-          cml runner launch \
-            --cloud=aws \
-            --cloud-region=eu-central-1 \
-            --cloud-type=t3.micro \
-            --cloud-image=ubuntu \
-            --cloud-metadata="subnet_id=subnet-0caa6172f115f9758" \
-            --labels=cml-cpu
-
-  train-mode:
-    needs: launch-runner
-    runs-on: [self-hosted, cml-cpu]
+  #     - name: Launch AWS Runner
+  #       shell: bash
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+  #         AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  #         REPO_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+  #       run: |
+  #         cml runner launch \
+  #           --cloud=aws \
+  #           --cloud-region=eu-central-1 \
+  #           --cloud-type=t3.micro \
+  #           --cloud-image=ubuntu \
+  #           --cloud-metadata="subnet_id=subnet-0caa6172f115f9758" \
+  #           --labels=cml-cpu
+  train-model:
+    # needs: launch-runner
+    # runs-on: [self-hosted, cml-cpu]
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: Checkout repository
