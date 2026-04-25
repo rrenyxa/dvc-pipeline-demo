@@ -33,8 +33,8 @@ jobs:
             --cloud=aws \
             --cloud-region=us-east-1 \
             --cloud-type=t3.medium \
-            --cloud-image=ami-04b70fa74e45c3917 \
             --labels=cml-cpu \
+            --cloud-image=ubuntu-22.04 \
             --reuse
 
   train-mode:
