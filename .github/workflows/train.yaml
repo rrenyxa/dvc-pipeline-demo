@@ -34,7 +34,6 @@ jobs:
             --cloud-region=us-east-1 \
             --cloud-type=t3.medium \
             --labels=cml-cpu \
-            --cloud-image=ubuntu-22.04 \
             --reuse
 
   train-mode:
