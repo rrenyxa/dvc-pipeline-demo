@@ -32,9 +32,11 @@ jobs:
           cml runner launch \
             --cloud=aws \
             --cloud-region=us-east-1 \
-            --cloud-type=t2.micro \
+            --cloud-type=t3.medium \
+            --cloud-image=ubuntu-22.04 \
             --labels=cml-cpu \
-            --reuse
+            --reuse \
+            --cloud-spot
 
   train-mode:
     needs: launch-runner
