@@ -1,7 +1,5 @@
+name: model-training
 on:
-  # push:
-  #   branches:
-  #     - main
   workflow_dispatch:
     inputs:
       epochs:
@@ -10,7 +8,6 @@ on:
         default: 3
 permissions:
   contents: write
-
 
 jobs:
   launch-runner:
@@ -33,9 +30,9 @@ jobs:
             --cloud=aws \
             --cloud-region=eu-central-1 \
             --cloud-type=t3.medium \
+            --cloud-image=ubuntu \
             --cloud-metadata="subnet_id=subnet-0caa6172f115f9758" \
-            --labels=cml-cpu \
-            --reuse
+            --labels=cml-cpu
 
   train-mode:
     needs: launch-runner
@@ -47,7 +44,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Instal uv
+      - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           version: "0.5.30"
@@ -95,11 +92,11 @@ jobs:
         run: |
           LAST_COMMIT=$(git rev-parse HEAD)
           echo "LAST_COMMIT: $LAST_COMMIT"
-
-          cat eval-artifacts/metrics.json > report.md
+          
+          # Создаем отчет
+          echo "## Training Report" > report.md
+          cat eval-artifacts/metrics.json >> report.md
+          echo "" >> report.md
           echo '![](./eval-artifacts/confusion_matrix.png "Confusion Matrix")' >> report.md
+          
           cml comment create --target commit/$LAST_COMMIT report.md
-
-
-
-  
