@@ -34,7 +34,8 @@ jobs:
           --cloud=aws \
           --labels=cml-cpu \
           --cloud-type=t3.large \
-          --cloud-region=us-east-1
+          --cloud-region=eu-west \
+          --cloud-spot
 
   train-mode:
     needs: launch-runner
