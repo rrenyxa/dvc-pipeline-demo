@@ -34,8 +34,7 @@ jobs:
             --cloud-region=eu-west-1 \
             --cloud-type=t3.large \
             --labels=cml-cpu \
-            --reuse \
-            --cloud-spot
+            --reuse
 
   train-mode:
     needs: launch-runner
