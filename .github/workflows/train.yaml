@@ -31,10 +31,11 @@ jobs:
         run: |
           cml runner launch \
             --cloud=aws \
-            --cloud-region=eu-west-1 \
-            --cloud-type=t3.large \
+            --cloud-region=us-east-1 \
+            --cloud-type=t3.medium \
             --labels=cml-cpu \
-            --reuse
+            --reuse \
+            --cloud-spot-price=0.05
 
   train-mode:
     needs: launch-runner
