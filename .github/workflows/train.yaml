@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install CML
-        uses: iterative/setup-cml@v1
+        uses: iterative/setup-cml@v2
 
       - name: Launch AWS Runner
         shell: bash
