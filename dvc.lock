@@ -3,31 +3,31 @@ stages:
   preprocess:
     cmd: "python src/dvc_pipeline_demo/preprocess.py --train-dir data/raw/training_set/training_set
       --test-dir data/raw/test_set/test_set --output-dir data/preprocessed --num-train
-      15 --num-test 5\n"
+      8 --num-test 4\n"
     params:
       params.yaml:
         preprocess:
           train_dir: data/raw/training_set/training_set
           test_dir: data/raw/test_set/test_set
           output_dir: data/preprocessed
-          num_train: 15
-          num_test: 5
+          num_train: 8
+          num_test: 4
     outs:
     - path: data/preprocessed
       hash: md5
-      md5: 73f5579c081c777649a9ef5a59a5815d.dir
-      size: 905856
-      nfiles: 40
+      md5: ae40e91c96c2131e3d4574f0e274059f.dir
+      size: 468943
+      nfiles: 24
   train:
     cmd: "python src/dvc_pipeline_demo/train.py --train-dir data/preprocessed/train
-      --output-dir models --num-epochs 2 --batch-size 16 --learning-rate 0.001 --num-workers
+      --output-dir models --num-epochs 3 --batch-size 2 --learning-rate 0.001 --num-workers
       -1 --device cpu\n"
     deps:
     - path: data/preprocessed
       hash: md5
-      md5: 73f5579c081c777649a9ef5a59a5815d.dir
-      size: 905856
-      nfiles: 40
+      md5: ae40e91c96c2131e3d4574f0e274059f.dir
+      size: 468943
+      nfiles: 24
     - path: src/dvc_pipeline_demo/data.py
       hash: md5
       md5: fd200a2e5c0a22e028aa46b9c5917898
@@ -46,24 +46,24 @@ stages:
           train_dir: data/raw/training_set/training_set
           test_dir: data/raw/test_set/test_set
           output_dir: data/preprocessed
-          num_train: 15
-          num_test: 5
+          num_train: 8
+          num_test: 4
         train:
           output_dir: models
-          epochs: 2
-          batch_size: 16
+          epochs: 3
+          batch_size: 2
           learning_rate: 0.001
           num_workers: -1
           device: cpu
     outs:
     - path: models/artifacts
       hash: md5
-      md5: 8f2dd926f2ed96be141f3eb6a4284434.dir
-      size: 66666
+      md5: 9bf5fff698e8bdbe6ab12119c74d631b.dir
+      size: 79541
       nfiles: 1
     - path: models/model.pth
       hash: md5
-      md5: 74e224ce610d3f3f98bed3cb678af4ad
+      md5: 48090f4867eadee266dee7d27cfd960c
       size: 6260053
   eval:
     cmd: "python src/dvc_pipeline_demo/evaluate.py --model-path models/model.pth --num-workers
@@ -71,12 +71,12 @@ stages:
     deps:
     - path: data/preprocessed/test
       hash: md5
-      md5: fe2b78376dba5fd451233188492ac68c.dir
-      size: 258294
-      nfiles: 10
+      md5: 86a09f57be8e088936bd79ed4c030165.dir
+      size: 151078
+      nfiles: 8
     - path: models/model.pth
       hash: md5
-      md5: 74e224ce610d3f3f98bed3cb678af4ad
+      md5: 48090f4867eadee266dee7d27cfd960c
       size: 6260053
     - path: src/dvc_pipeline_demo/data.py
       hash: md5
@@ -98,6 +98,6 @@ stages:
     outs:
     - path: eval-artifacts
       hash: md5
-      md5: f72500709483601b6ab02e527af7284d.dir
-      size: 57285
+      md5: f6f610685053eb2a15ed54f467c0adbe.dir
+      size: 73320
       nfiles: 2
